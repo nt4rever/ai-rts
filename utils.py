@@ -32,6 +32,7 @@ def load_model(path='./store/best_weight.h5'):
 
 def convert_file_to_image(file: bytes):
     image = Image.open(BytesIO(file))
+    image = image.convert("RGB")
     image = image.resize(target_size)
     return image
 

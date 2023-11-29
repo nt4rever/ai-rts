@@ -43,11 +43,17 @@ def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
 @app.post("/predicts")
 async def predict_images(files: Annotated[list[bytes], File(default=...)],
                          key: str = Security(get_api_key)):
-    res = []
-    for file in files:
-        image = convert_file_to_image(file)
-        res.append(rts_predict(model, image))
-    return res
+    try:
+        res = []
+        for file in files:
+            image = convert_file_to_image(file)
+            res.append(rts_predict(model, image))
+        return res
+    except:
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            detail="Internal server error",
+        )
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8888)
