@@ -3,6 +3,7 @@ from PIL import Image
 from io import BytesIO
 from keras.preprocessing import image as k_image
 import numpy as np
+import requests
 
 target_size = (224, 224)
 
@@ -30,8 +31,9 @@ def load_model(path='./store/best_weight.h5'):
     return K.models.load_model(path)
 
 
-def convert_file_to_image(file: bytes):
-    image = Image.open(BytesIO(file))
+def convert_url_to_image(url: str):
+    response = requests.get(url)
+    image = Image.open(BytesIO(response.content))
     image = image.convert("RGB")
     image = image.resize(target_size)
     return image

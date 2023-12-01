@@ -1,11 +1,12 @@
-from fastapi import FastAPI, HTTPException, Security, File, UploadFile
+from fastapi import FastAPI, HTTPException, Security
+from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import APIKeyHeader
 import uvicorn
 from http import HTTPStatus
-from typing import Annotated
-from utils import load_model, rts_predict, convert_file_to_image
+from utils import load_model, rts_predict, convert_url_to_image
 import os
+from typing import List
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -40,13 +41,16 @@ def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
     )
 
 
+class ImageList(BaseModel):
+    images: List[str]
+
+
 @app.post("/predicts")
-async def predict_images(files: Annotated[list[bytes], File(default=...)],
-                         key: str = Security(get_api_key)):
+async def predict_images(payload: ImageList, key: str = Security(get_api_key)):
     try:
         res = []
-        for file in files:
-            image = convert_file_to_image(file)
+        for image in payload.images:
+            image = convert_url_to_image(image)
             res.append(rts_predict(model, image))
         return res
     except:
