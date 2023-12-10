@@ -1,5 +1,4 @@
 .env
 datasets
 __pycache__
-# store/rts_best_weigth.h5
-# store/rts.h5
+store
