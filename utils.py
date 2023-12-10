@@ -8,32 +8,28 @@ import requests
 target_size = (224, 224)
 
 class_labels = ['dry_asphalt_severe',
-                'dry_asphalt_slight',
                 'dry_asphalt_smooth',
                 'dry_concrete_severe',
-                'dry_concrete_slight',
                 'dry_concrete_smooth',
-                'water_asphalt_severe',
-                'water_asphalt_slight',
-                'water_asphalt_smooth',
-                'water_concrete_severe',
-                'water_concrete_slight',
-                'water_concrete_smooth',
+                'dry_gravel',
                 'wet_asphalt_severe',
-                'wet_asphalt_slight',
-                'wet_asphalt_smooth',
-                'wet_concrete_severe',
-                'wet_concrete_slight',
-                'wet_concrete_smooth']
+                'wet_asphalt_smooth']
 
 
-def load_model(path='./store/best_weight.h5'):
+def load_model(path='./store/rts_best_weight.h5'):
     return K.models.load_model(path)
 
 
 def convert_url_to_image(url: str):
     response = requests.get(url)
     image = Image.open(BytesIO(response.content))
+    image = image.convert("RGB")
+    image = image.resize(target_size)
+    return image
+
+
+def convert_file_to_image(file: bytes):
+    image = Image.open(BytesIO(file))
     image = image.convert("RGB")
     image = image.resize(target_size)
     return image
