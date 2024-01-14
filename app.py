@@ -47,7 +47,7 @@ class ImageList(BaseModel):
 
 
 @app.post("/predicts")
-async def predict_images(payload: ImageList, key: str = Security(get_api_key)):
+async def predict_images_from_url(payload: ImageList, key: str = Security(get_api_key)):
     try:
         res = []
         for image in payload.images:
